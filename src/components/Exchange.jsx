@@ -1,9 +1,9 @@
-import { useState, useContext } from 'react'
+import { useState, useContext, useEffect } from 'react'
 import { CurrencyContext } from '../contexts/CurrencyContext'
 import { Container, Row, Col } from 'react-bootstrap'
 import FloatingLabel from 'react-bootstrap/FloatingLabel'
 import Form from 'react-bootstrap/Form'
-import Button from 'react-bootstrap/Button'
+import AOS from 'aos'
 
 const Exchange = () => {
   const { currencyRates } = useContext(CurrencyContext)
@@ -12,13 +12,18 @@ const Exchange = () => {
   const [targetCurrency, setTargetCurrency] = useState('EUR')
   const [targetAmount, setTargetAmount] = useState(0)
   const inputCurrencyHeight = 128
-
   const calcTargetAmount = (input) => {
     const result = (input / currencyRates.conversion_rates[currentCurrency]) * currencyRates.conversion_rates[targetCurrency]
 
     setCurrentAmount(input)  
     setTargetAmount(result)
   }
+
+  useEffect(() => {
+    AOS.init({
+      duration: 2000
+    })
+  }, [])
 
   return (
     <>
@@ -32,7 +37,7 @@ const Exchange = () => {
           <Form className='w-75'>
             <Row>
               <Col md={6}>
-                <div>
+                <div data-aos='fade-up'>
                   <Form.Group className='mb-3'>
                     <Form.Select 
                       className='w-25 fw-bold' 
@@ -64,7 +69,7 @@ const Exchange = () => {
                 </div>
               </Col>
               <Col md={6}>
-                <div>
+                <div data-aos='fade-up'>
                   <Form.Group className='mb-3'>
                     <Form.Select 
                       className='w-25 fw-bold' 
