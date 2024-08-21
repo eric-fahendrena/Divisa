@@ -7,7 +7,7 @@ import Form from 'react-bootstrap/Form'
 import AOS from 'aos'
 
 const Exchange = () => {
-  const { currencyRates, countries } = useContext(CurrencyContext)
+  const { currencyRates } = useContext(CurrencyContext)
   const [currentCurrency, setCurrentCurrency] = useState('USD')
   const [currentAmount, setCurrentAmount] = useState(0)
   const [targetCurrency, setTargetCurrency] = useState('EUR')
@@ -59,15 +59,12 @@ const Exchange = () => {
                       >
                         {currencyRates.conversion_rates != null ? (
                           Object.keys(currencyRates.conversion_rates).map((currency, index) => {
-                            let country = countries[currency] ? countries[currency] : ''
-
                             return (
                               <Dropdown.Item 
                                 eventKey={currency}
                                 disabled={ targetCurrency === currency } 
                                 key={index}
                               >
-                                <img src={`https://flagpedia.net/data/flags/h80/${country.toLowerCase()}.webp`} alt={countries[currency]} style={{ width: 16 }} />
                                 {currency}
                               </Dropdown.Item> 
                             ) 
