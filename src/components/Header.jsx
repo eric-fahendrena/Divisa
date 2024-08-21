@@ -7,7 +7,7 @@ const Header = () => {
             <header className='fixed-top'>
                 <Navbar variant='dark' className=''>
                     <Container>
-                        <Navbar.Brand href='/'><span className='fs-3'>Divisa Exchange</span></Navbar.Brand>
+                        <Navbar.Brand href='/'><span className='fs-3 fw-bold'>DivisaX</span>change</Navbar.Brand>
                     </Container>
                 </Navbar>
             </header>

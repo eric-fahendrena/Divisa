@@ -1,12 +1,13 @@
 import { useState, useContext, useEffect } from 'react'
 import { CurrencyContext } from '../contexts/CurrencyContext'
 import { Container, Row, Col } from 'react-bootstrap'
+import { Dropdown, DropdownButton } from 'react-bootstrap'
 import FloatingLabel from 'react-bootstrap/FloatingLabel'
 import Form from 'react-bootstrap/Form'
 import AOS from 'aos'
 
 const Exchange = () => {
-  const { currencyRates } = useContext(CurrencyContext)
+  const { currencyRates, countries } = useContext(CurrencyContext)
   const [currentCurrency, setCurrentCurrency] = useState('USD')
   const [currentAmount, setCurrentAmount] = useState(0)
   const [targetCurrency, setTargetCurrency] = useState('EUR')
@@ -16,7 +17,8 @@ const Exchange = () => {
     const result = (input / currencyRates.conversion_rates[currentCurrency]) * currencyRates.conversion_rates[targetCurrency]
 
     setCurrentAmount(input)  
-    setTargetAmount(result)
+    // setTargetAmount(result)
+    return result
   }
 
   useEffect(() => {
@@ -39,18 +41,40 @@ const Exchange = () => {
               <Col md={6}>
                 <div data-aos='fade-up'>
                   <Form.Group className='mb-3'>
-                    <Form.Select 
-                      className='w-25 fw-bold' 
-                      onChange={(e) => {
-                        setCurrentCurrency(e.target.value)
-                        calcTargetAmount(currentAmount)
-                      }}>
-                      <option value="USD" disabled={ targetCurrency === 'USD' }>USD</option>
-                      <option value="EUR" disabled={ targetCurrency === 'EUR' }>EUR</option>
-                      <option value="GBP" disabled={ targetCurrency === 'GBP' }>GBP</option>
-                      <option value="JPY" disabled={ targetCurrency === 'JPY' }>JPY</option>
-                      <option value="AUD" disabled={ targetCurrency === 'AUD' }>AUD</option>
-                    </Form.Select>
+                  <DropdownButton 
+                      variant='light'
+                      title={currentCurrency} 
+                      onSelect={(eventKey) => {
+                        setCurrentCurrency(eventKey)
+                        console.log('before', targetAmount)
+                        const newTargetAmount = calcTargetAmount(currentAmount)
+                        console.log('after', newTargetAmount)
+                      }}
+                    >
+                      <div
+                        className='overflow-y-scroll'
+                        style={{
+                          maxHeight: 160
+                        }}
+                      >
+                        {currencyRates.conversion_rates != null ? (
+                          Object.keys(currencyRates.conversion_rates).map((currency, index) => {
+                            let country = countries[currency] ? countries[currency] : ''
+
+                            return (
+                              <Dropdown.Item 
+                                eventKey={currency}
+                                disabled={ targetCurrency === currency } 
+                                key={index}
+                              >
+                                <img src={`https://flagpedia.net/data/flags/h80/${country.toLowerCase()}.webp`} alt={countries[currency]} style={{ width: 16 }} />
+                                {currency}
+                              </Dropdown.Item> 
+                            ) 
+                          })
+                          ) : <Dropdown.Item>Chargement...</Dropdown.Item>}
+                      </div>
+                    </DropdownButton>
                   </Form.Group>
 
                   <Form.Group className='mb-3'>
@@ -63,7 +87,7 @@ const Exchange = () => {
                         placeholder='Entrez le montant' 
                         className='fs-1' 
                         style={{ height: inputCurrencyHeight }}
-                        onChange={ (e) => calcTargetAmount(e.target.value) } />
+                        onChange={ (e) => setTargetAmount(calcTargetAmount(e.target.value)) } />
                     </FloatingLabel>
                   </Form.Group>
                 </div>
@@ -71,21 +95,37 @@ const Exchange = () => {
               <Col md={6}>
                 <div data-aos='fade-up'>
                   <Form.Group className='mb-3'>
-                    <Form.Select 
-                      className='w-25 fw-bold' 
-                      defaultValue={'EUR'} 
-                      onChange={(e) => {
-                        console.log('Vous avec selectionné', e.target.value)
-                        setTargetCurrency(e.target.value)
-                        setCurrentAmount(currentAmount)
-                        calcTargetAmount(currentAmount)
-                      }}>
-                      <option value="USD" disabled={ currentCurrency === 'USD' }>USD</option>
-                      <option value="EUR" disabled={ currentCurrency === 'EUR' }>EUR</option>
-                      <option value="GBP" disabled={ currentCurrency === 'GBP' }>GBP</option>
-                      <option value="JPY" disabled={ currentCurrency === 'JPY' }>JPY</option>
-                      <option value="AUD" disabled={ currentCurrency === 'AUD' }>AUD</option>
-                    </Form.Select>
+                    <DropdownButton 
+                      variant='light'
+                      title={targetCurrency} 
+                      onSelect={(eventKey) => {
+                        setTargetCurrency(eventKey)
+                        console.log('before', targetAmount)
+                        const newTargetAmount = calcTargetAmount(currentAmount)
+                        console.log('after', newTargetAmount)
+                      }}
+                    >
+                      <div
+                        className='overflow-y-scroll'
+                        style={{
+                          maxHeight: 160
+                        }}
+                      >
+                        {currencyRates.conversion_rates != null ? (
+                          Object.keys(currencyRates.conversion_rates).map((currency, index) => {
+                            return (
+                              <Dropdown.Item 
+                                eventKey={currency}
+                                disabled={ currentCurrency === currency } 
+                                key={index}
+                              >
+                                {currency}
+                              </Dropdown.Item> 
+                            ) 
+                          })
+                          ) : <Dropdown.Item>Chargement...</Dropdown.Item>}
+                      </div>
+                    </DropdownButton>
                   </Form.Group>
 
                   <Form.Group className='mb-3'>
@@ -106,6 +146,9 @@ const Exchange = () => {
             </Row>
           </Form>
         </Container>
+        <div className='fixed-bottom ps-5'>
+          <p className='pt-5 small text-light'>© 2024 J. Eric Razanapahendrena.</p>
+        </div>
       </section>
     </>
   )
